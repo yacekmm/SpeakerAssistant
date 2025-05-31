@@ -1,0 +1,31 @@
+tests are empty. always include test for the codebase you write. coverage is not important so no testing of getters and setters, ... , but readability and quality is a must. Follow testing patterns from my repository @https://github.com/yacekmm/Tickets 
+avoid mocks where responsible, avoid duplication. also run and fix tests after each change.
+Crate also a Github Workflow for CI to run those tests after each push.
+
+Following the testing patterns from the Tickets repository, I've implemented:
+
+1. Backend Tests:
+   - Audio processor tests with pytest
+   - FastAPI endpoint tests with TestClient
+   - WebSocket connection tests
+   - Following given/when/then pattern
+   - Minimal mocking, focusing on real behavior
+
+2. Frontend Tests:
+   - React component tests with Jest and Testing Library
+   - Async component testing
+   - Mocked API and WebSocket responses
+   - UI element presence verification
+
+3. CI Setup:
+   - GitHub Actions workflow for both backend and frontend
+   - Python and Node.js test environments
+   - Coverage reporting with Codecov
+   - Automatic test runs on push and PR
+
+4. Test Dependencies:
+   - Added pytest, pytest-asyncio, pytest-cov
+   - Added httpx for FastAPI testing
+   - Updated package.json with test scripts
+
+The tests focus on functionality and integration rather than implementation details, avoiding unnecessary mocking and following the patterns from the Tickets repository. 
