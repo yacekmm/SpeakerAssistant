@@ -1,9 +1,19 @@
 # Project Rules
 
 ## Git Commit Messages
-- Use the exact prompt as the commit message
-- Include the full prompt, not just a summary
-- Format: Use the exact wording provided by the user
+- Format:
+  ```
+  <Summary of changes>
+  <exact prompt that caused the changes>
+  ```
+- Every prompt that changes anything in the project must be a git commit message
+- The summary should be concise and describe the main change
+- The prompt must be included in its entirety, exactly as provided
+- Example:
+  ```
+  initial setup
+  <text of the prompt that requested the initial setup>
+  ```
 
 ## Testing
 - Always include tests for the codebase
