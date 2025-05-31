@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - AUDIO_INPUT_DEVICE=${AUDIO_INPUT_DEVICE}
+      - AUDIO_OUTPUT_DEVICE=${AUDIO_OUTPUT_DEVICE}
+      - STAGETIMER_API_KEY=${STAGETIMER_API_KEY}
+    volumes:
+      - ../src:/app
+    devices:
+      - /dev/snd:/dev/snd  # For audio device access
+    network_mode: host  # Required for audio device access on Windows
+
+  frontend:
+    build:
+      context: ../src/frontend
+      dockerfile: Dockerfile
+    ports:
+      - "${WEB_UI_PORT:-3000}:3000"
+    environment:
+      - REACT_APP_BACKEND_URL=http://localhost:8000
+    volumes:
+      - ../src/frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend 
