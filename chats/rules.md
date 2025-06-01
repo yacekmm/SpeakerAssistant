@@ -45,4 +45,8 @@
 - Update this file whenever a new rule is set or an existing rule is changed
 - Document the date and context of rule changes
 - Keep rules organized by category
-- Ensure all team members are aware of rule changes 
+- Ensure all team members are aware of rule changes
+
+## Docker and Build Configuration
+- Always commit changes after fixing or updating Dockerfiles, docker-compose, or build configuration.
+- Never forget to commit after such changes, and always reference the relevant prompt in the commit message. 
