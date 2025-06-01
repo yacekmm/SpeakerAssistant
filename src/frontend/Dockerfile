@@ -2,16 +2,22 @@ FROM node:18-alpine
 
 WORKDIR /app
 
+# Create a non-root user
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
 # Install dependencies
 COPY package*.json ./
-RUN npm install
+RUN npm install -g react-scripts && \
+    npm install
 
 # Copy application code
 COPY . .
 
-# Fix file permissions and ensure case sensitivity
-RUN chmod -R 755 /app && \
-    find /app -type f -exec chmod 644 {} \;
+# Fix file permissions
+RUN chown -R appuser:appgroup /app
+
+# Switch to non-root user
+USER appuser
 
 # Add development server configuration
 ENV WDS_SOCKET_PORT=0
