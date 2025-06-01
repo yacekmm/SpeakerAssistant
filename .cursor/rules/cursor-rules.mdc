@@ -1,0 +1,71 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Project Rules
+
+## Git Commit Messages
+- Format:
+  ```
+  <Summary of changes>
+  <exact prompt that caused the changes>
+  ```
+- Every prompt that changes anything in the project must be a git commit message
+- The summary should be concise and describe the main change
+- The prompt must be included in its entirety, exactly as provided
+- Example:
+  ```
+  initial setup
+  <text of the prompt that requested the initial setup>
+  ```
+- always git add all files, not just selected to avoid skipping something
+  
+
+## Testing
+- Always include tests for the codebase
+- Focus on quality and readability over coverage
+- Do not test getters and setters
+- Follow testing patterns from https://github.com/yacekmm/Tickets repo
+- Avoid mocks where responsible
+- Avoid duplication
+- Run and fix tests after each change
+- Include GitHub Workflow for CI to run tests after each push
+
+## Documentation
+- Keep README.md up to date with:
+  - Project description
+  - Features
+  - Technical requirements
+  - Architecture
+  - Setup instructions
+  - Development status
+  - Getting started guide
+  - Project structure
+
+## Chat Log
+- Maintain conversation history in `chats/cursor.md`
+- Document all significant changes and decisions
+- Include implementation details and explanations
+
+## Rules Management
+- Update this file whenever a new rule is set or an existing rule is changed
+- Document the date and context of rule changes
+- Keep rules organized by category
+- Ensure all team members are aware of rule changes
+
+## Docker and Build Configuration
+- Always commit changes after fixing or updating Dockerfiles, docker-compose, or build configuration.
+
+
+
+
+
+
+
+
+
+
+
+
+- Never forget to commit after such changes, and always reference the relevant prompt in the commit message.
