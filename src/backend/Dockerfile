@@ -5,11 +5,15 @@ WORKDIR /app
 # Install system dependencies for PyAudio
 RUN apt-get update && apt-get install -y \
     portaudio19-dev \
-    python3-pyaudio \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first to leverage Docker cache
 COPY ../../requirements.txt .
+
+# Install PyAudio using a pre-built wheel
+RUN pip install --no-cache-dir --only-binary :all: pyaudio==0.2.13
+
+# Install other requirements
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
