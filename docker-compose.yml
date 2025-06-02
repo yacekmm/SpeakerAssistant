@@ -26,6 +26,10 @@ services:
       - /app/node_modules
     environment:
       - REACT_APP_API_URL=http://localhost:8000
+      - WDS_SOCKET_PORT=0
+      - WDS_SOCKET_HOST=0.0.0.0
+      - CHOKIDAR_USEPOLLING=true
+      - FAST_REFRESH=true
     depends_on:
       - backend
     networks:

@@ -24,9 +24,11 @@ USER appuser
 ENV WDS_SOCKET_PORT=0
 ENV WDS_SOCKET_HOST=0.0.0.0
 ENV CI=false
+ENV CHOKIDAR_USEPOLLING=true
+ENV FAST_REFRESH=true
 
 # Expose port
 EXPOSE 3000
 
-# Start the application in development mode
+# Start the application in development mode with hot reloading
 CMD ["npm", "start"] 

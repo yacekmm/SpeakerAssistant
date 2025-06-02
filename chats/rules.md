@@ -1,5 +1,7 @@
 # Project Rules
 
+Always follow these rules
+
 ## Git Commit Messages
 - Format:
   ```
