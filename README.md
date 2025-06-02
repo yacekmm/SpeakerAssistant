@@ -79,6 +79,13 @@ A real-time AI-powered training session assistant that helps presenters maintain
 3. Run `docker-compose up`
 4. Access the web UI at `http://localhost:${WEB_UI_PORT}`
 
+### Development Mode
+The project supports hot reloading in development mode:
+- Frontend changes are automatically reflected without container restart
+- Backend changes require container restart
+- WebSocket connection is maintained during frontend updates
+- Environment variables are configured for optimal development experience
+
 ## Project Structure
 ```
 speaker-assistant/
