@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 from typing import List, Dict
 import json
+from audio_processing.processor import AudioProcessor
 
 app = FastAPI(title="Speaker Assistant API")
 
@@ -14,6 +15,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Initialize audio processor
+audio_processor = AudioProcessor()
 
 # Store active WebSocket connections
 active_connections: List[WebSocket] = []
@@ -27,32 +31,38 @@ async def get_audio_devices():
     """
     Get list of available audio input and output devices
     """
-    # TODO: Implement audio device detection
-    return {
-        "input_devices": [],
-        "output_devices": []
-    }
+    try:
+        return audio_processor.list_audio_devices()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get audio devices: {str(e)}")
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
+    print(f"INFO:     connection open")
     active_connections.append(websocket)
     try:
         while True:
-            data = await websocket.receive_text()
-            # TODO: Implement real-time audio processing and analysis
-            await websocket.send_json({
-                "type": "analysis",
-                "data": {
-                    "filler_words": 0,
-                    "speaking_time": 0,
-                    "engagement_score": 0,
-                    "suggested_questions": []
-                }
-            })
+            try:
+                data = await websocket.receive_text()
+                print(f"INFO:     received data: {data}")
+                # TODO: Implement real-time audio processing and analysis
+                await websocket.send_json({
+                    "type": "analysis",
+                    "data": {
+                        "filler_words": 0,
+                        "speaking_time": 0,
+                        "engagement_score": 0,
+                        "suggested_questions": []
+                    }
+                })
+            except Exception as e:
+                print(f"WebSocket inner error: {e}")
+                break
     except Exception as e:
         print(f"WebSocket error: {e}")
     finally:
+        print(f"INFO:     connection closed")
         active_connections.remove(websocket)
 
 @app.get("/stagetimer/status")

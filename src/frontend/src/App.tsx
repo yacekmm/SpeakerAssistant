@@ -69,12 +69,13 @@ function App() {
     // Fetch audio devices
     const fetchDevices = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/devices');
+        const response = await axios.get('http://localhost:8000/audio-devices');
         setInputDevices(response.data.input_devices);
         setOutputDevices(response.data.output_devices);
         setLoading(false);
-      } catch (err) {
-        setError('Failed to fetch audio devices');
+      } catch (error) {
+        console.error('Error fetching audio devices:', error);
+        setError('Failed to fetch audio devices. Please ensure the backend server is running.');
         setLoading(false);
       }
     };
@@ -85,7 +86,11 @@ function App() {
   useEffect(() => {
     // Initialize WebSocket connection
     const websocket = new WebSocket('ws://localhost:8000/ws');
-    
+
+    websocket.onopen = () => {
+      console.log('WebSocket connection opened');
+    };
+
     websocket.onmessage = (event) => {
       const data = JSON.parse(event.data);
       if (data.type === 'analysis') {
@@ -96,12 +101,19 @@ function App() {
 
     websocket.onerror = () => {
       setError('WebSocket connection error');
+      console.error('WebSocket connection error');
+    };
+
+    websocket.onclose = (event) => {
+      console.log('WebSocket connection closed', event);
     };
 
     setWs(websocket);
 
     return () => {
-      websocket.close();
+      if (websocket.readyState === WebSocket.OPEN || websocket.readyState === WebSocket.CONNECTING) {
+        websocket.close();
+      }
     };
   }, []);
 
