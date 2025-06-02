@@ -30,6 +30,7 @@ Always follow these rules
 
 ## Terminal Commands
 - Git commands (add, commit, push) should be executed automatically
+- Every commit must be followed by an automatic push
 - Other terminal commands should require manual approval
 - Git commands should be executed in sequence (add -> commit -> push)
 - Git commit messages must follow the format specified in Git Commit Messages section
