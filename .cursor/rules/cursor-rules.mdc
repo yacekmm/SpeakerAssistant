@@ -19,7 +19,7 @@ Always follow these rules
 - Example:
   ```
   initial setup
-  <text of the prompt that requested the initial setup>
+  Please make the initial setup of the application
   ```
 - always git add all files, not just selected to avoid skipping something
 

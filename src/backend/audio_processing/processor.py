@@ -2,6 +2,7 @@ import pyaudio
 from typing import Dict, List
 import logging
 import os
+import platform
 
 logger = logging.getLogger(__name__)
 
@@ -10,18 +11,22 @@ class AudioProcessor:
         self.has_audio = False
         self.p = None
         try:
-            # Set ALSA environment variables if not set
-            if 'ALSA_CARD' not in os.environ:
-                os.environ['ALSA_CARD'] = 'Generic'
-            if 'ALSA_DEVICE' not in os.environ:
-                os.environ['ALSA_DEVICE'] = 'hw:0,0'
-            
+            # Initialize PyAudio
             self.p = pyaudio.PyAudio()
+            
             # Test if we can actually access audio devices
             device_count = self.p.get_device_count()
             if device_count > 0:
                 self.has_audio = True
                 logger.info(f"Successfully initialized PyAudio with {device_count} devices")
+                
+                # Log available devices for debugging
+                for i in range(device_count):
+                    try:
+                        device_info = self.p.get_device_info_by_index(i)
+                        logger.info(f"Device {i}: {device_info['name']} (in: {device_info['maxInputChannels']}, out: {device_info['maxOutputChannels']})")
+                    except Exception as e:
+                        logger.warning(f"Failed to get info for device {i}: {e}")
             else:
                 logger.warning("No audio devices found")
         except Exception as e:
@@ -53,6 +58,10 @@ class AudioProcessor:
             for i in range(self.p.get_device_count()):
                 try:
                     device_info = self.p.get_device_info_by_index(i)
+                    # Skip devices with no channels
+                    if device_info["maxInputChannels"] == 0 and device_info["maxOutputChannels"] == 0:
+                        continue
+                        
                     device = {
                         "id": i,
                         "name": device_info["name"],
@@ -62,8 +71,10 @@ class AudioProcessor:
                     
                     if device_info["maxInputChannels"] > 0:
                         input_devices.append(device)
+                        logger.info(f"Added input device: {device['name']}")
                     if device_info["maxOutputChannels"] > 0:
                         output_devices.append(device)
+                        logger.info(f"Added output device: {device['name']}")
                 except Exception as e:
                     logger.warning(f"Failed to get info for device {i}: {e}")
                     continue
@@ -79,6 +90,7 @@ class AudioProcessor:
                     ]
                 }
             
+            logger.info(f"Found {len(input_devices)} input devices and {len(output_devices)} output devices")
             return {
                 "input_devices": input_devices,
                 "output_devices": output_devices
