@@ -1,5 +1,7 @@
 .App {
   text-align: center;
+  min-height: 100vh;
+  background-color: #f5f5f5;
 }
 
 .App-header {
@@ -20,4 +22,59 @@
 .App-header p {
   font-size: 1.2rem;
   opacity: 0.8;
+}
+
+.MuiPaper-root {
+  transition: all 0.3s ease;
+}
+
+.MuiPaper-root:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.MuiTypography-h3 {
+  color: #1976d2;
+  font-weight: 600 !important;
+  margin-bottom: 2rem !important;
+}
+
+.MuiTypography-h6 {
+  color: #1976d2;
+  font-weight: 500 !important;
+  margin-bottom: 1rem !important;
+}
+
+.MuiFormControl-root {
+  margin-bottom: 1rem !important;
+}
+
+.MuiSelect-select {
+  padding: 0.75rem !important;
+}
+
+.MuiAlert-root {
+  margin-bottom: 1rem !important;
+}
+
+.MuiGrid-item {
+  margin-bottom: 1rem !important;
+}
+
+.MuiBox-root {
+  padding: 1rem !important;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+li:last-child {
+  border-bottom: none;
 } 
