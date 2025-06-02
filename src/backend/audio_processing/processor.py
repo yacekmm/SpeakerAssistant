@@ -1,17 +1,31 @@
 import pyaudio
 from typing import Dict, List
 import logging
+import os
 
 logger = logging.getLogger(__name__)
 
 class AudioProcessor:
     def __init__(self):
+        self.has_audio = False
+        self.p = None
         try:
+            # Set ALSA environment variables if not set
+            if 'ALSA_CARD' not in os.environ:
+                os.environ['ALSA_CARD'] = 'Generic'
+            if 'ALSA_DEVICE' not in os.environ:
+                os.environ['ALSA_DEVICE'] = 'hw:0,0'
+            
             self.p = pyaudio.PyAudio()
-            self.has_audio = True
+            # Test if we can actually access audio devices
+            device_count = self.p.get_device_count()
+            if device_count > 0:
+                self.has_audio = True
+                logger.info(f"Successfully initialized PyAudio with {device_count} devices")
+            else:
+                logger.warning("No audio devices found")
         except Exception as e:
             logger.warning(f"Failed to initialize PyAudio: {e}")
-            self.has_audio = False
         self.filler_word_count = 0
         self.speaking_time = 0
         self.last_analysis_time = 0
@@ -21,7 +35,7 @@ class AudioProcessor:
         List all available audio input and output devices
         Returns mock devices if real devices are not available
         """
-        if not self.has_audio:
+        if not self.has_audio or not self.p:
             logger.info("Using mock audio devices")
             return {
                 "input_devices": [
@@ -116,7 +130,7 @@ class AudioProcessor:
         """
         Clean up PyAudio resources
         """
-        if hasattr(self, 'p'):
+        if self.p:
             try:
                 self.p.terminate()
             except Exception as e:

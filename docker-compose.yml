@@ -13,8 +13,8 @@ services:
       - PYTHONPATH=/app
       - PYTHONUNBUFFERED=1
       - LOG_LEVEL=INFO
-    devices:
-      - /dev/snd:/dev/snd
+      - ALSA_CARD=Generic
+      - ALSA_DEVICE=hw:0,0
     privileged: true
     restart: unless-stopped
 
