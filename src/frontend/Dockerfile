@@ -7,14 +7,15 @@ RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
 # Install dependencies
 COPY package*.json ./
-RUN npm install -g react-scripts && \
-    npm install
+RUN npm install && \
+    npm install react-scripts
 
 # Copy application code
 COPY . .
 
 # Fix file permissions
-RUN chown -R appuser:appgroup /app
+RUN chown -R appuser:appgroup /app && \
+    chmod -R 755 /app
 
 # Switch to non-root user
 USER appuser
