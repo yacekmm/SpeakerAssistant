@@ -22,7 +22,17 @@ Always follow these rules
   <text of the prompt that requested the initial setup>
   ```
 - always git add all files, not just selected to avoid skipping something
-  
+
+## Code Changes
+- All code changes must be auto-applied without requiring manual "Apply All" confirmation
+- Changes should be applied immediately after they are generated
+- No manual intervention should be required for code modifications
+
+## Terminal Commands
+- Git commands (add, commit, push) should be executed automatically
+- Other terminal commands should require manual approval
+- Git commands should be executed in sequence (add -> commit -> push)
+- Git commit messages must follow the format specified in Git Commit Messages section
 
 ## Testing
 - Always include tests for the codebase
@@ -58,16 +68,4 @@ Always follow these rules
 
 ## Docker and Build Configuration
 - Always commit changes after fixing or updating Dockerfiles, docker-compose, or build configuration.
-
-
-
-
-
-
-
-
-
-
-
-
 - Never forget to commit after such changes, and always reference the relevant prompt in the commit message.
