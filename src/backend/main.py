@@ -1,13 +1,20 @@
 from fastapi import FastAPI, WebSocket, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-import os
-from typing import List, Dict
+from typing import Dict, List
 import json
+import logging
 from audio_processing.processor import AudioProcessor
 
-app = FastAPI(title="Speaker Assistant API")
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
-# Configure CORS
+app = FastAPI()
+
+# Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # In production, replace with specific origins
@@ -19,12 +26,12 @@ app.add_middleware(
 # Initialize audio processor
 audio_processor = AudioProcessor()
 
-# Store active WebSocket connections
-active_connections: List[WebSocket] = []
-
 @app.get("/")
 async def root():
-    return {"message": "Speaker Assistant API is running"}
+    """
+    Root endpoint to verify the API is running
+    """
+    return {"status": "ok", "message": "Speaker Assistant API is running"}
 
 @app.get("/audio-devices")
 async def get_audio_devices():
@@ -32,38 +39,64 @@ async def get_audio_devices():
     Get list of available audio input and output devices
     """
     try:
-        return audio_processor.list_audio_devices()
+        devices = audio_processor.list_audio_devices()
+        logger.info(f"Successfully retrieved {len(devices['input_devices'])} input devices and {len(devices['output_devices'])} output devices")
+        return devices
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to get audio devices: {str(e)}")
+        logger.error(f"Error getting audio devices: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get audio devices")
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
+    """
+    WebSocket endpoint for real-time audio processing
+    """
     await websocket.accept()
-    print(f"INFO:     connection open")
-    active_connections.append(websocket)
+    logger.info("WebSocket connection established")
+    
     try:
         while True:
             try:
+                # Wait for messages
                 data = await websocket.receive_text()
-                print(f"INFO:     received data: {data}")
-                # TODO: Implement real-time audio processing and analysis
+                logger.debug(f"Received WebSocket message: {data[:100]}...")
+                
+                # Parse the message
+                message = json.loads(data)
+                
+                if message["type"] == "device_change":
+                    logger.info(f"Device change requested: {message}")
+                    # TODO: Implement device change handling
+                    await websocket.send_json({
+                        "type": "status",
+                        "status": "device_changed",
+                        "device_type": message["device_type"],
+                        "device_id": message["device_id"]
+                    })
+                else:
+                    logger.warning(f"Unknown message type: {message['type']}")
+                    await websocket.send_json({
+                        "type": "error",
+                        "error": "Unknown message type"
+                    })
+                    
+            except json.JSONDecodeError:
+                logger.error("Invalid JSON received")
                 await websocket.send_json({
-                    "type": "analysis",
-                    "data": {
-                        "filler_words": 0,
-                        "speaking_time": 0,
-                        "engagement_score": 0,
-                        "suggested_questions": []
-                    }
+                    "type": "error",
+                    "error": "Invalid JSON"
                 })
             except Exception as e:
-                print(f"WebSocket inner error: {e}")
-                break
+                logger.error(f"Error processing message: {e}")
+                await websocket.send_json({
+                    "type": "error",
+                    "error": str(e)
+                })
+                
     except Exception as e:
-        print(f"WebSocket error: {e}")
+        logger.error(f"WebSocket error: {e}")
     finally:
-        print(f"INFO:     connection closed")
-        active_connections.remove(websocket)
+        logger.info("WebSocket connection closed")
 
 @app.get("/stagetimer/status")
 async def get_stagetimer_status():

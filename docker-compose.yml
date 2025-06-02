@@ -11,6 +11,8 @@ services:
       - ./src/backend:/app
     environment:
       - PYTHONPATH=/app
+      - PYTHONUNBUFFERED=1
+      - LOG_LEVEL=INFO
     devices:
       - /dev/snd:/dev/snd
     privileged: true
@@ -26,8 +28,8 @@ services:
       - ./src/frontend:/app
       - /app/node_modules
     environment:
+      - NODE_ENV=development
       - REACT_APP_API_URL=http://localhost:8000
-      - REACT_APP_WS_URL=ws://localhost:8000
     depends_on:
       - backend
     restart: unless-stopped
